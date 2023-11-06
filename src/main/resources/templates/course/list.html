@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/course}"> <!--레이아웃이름 확인-->
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container">  <!--작업 공간-->
+        <form th:action="@{/course/list}" method="get">
+        <div class="row container mt-3 mb-3">  <!--첫 번째 줄-->
+            <div class="col-2">
+                <select class="form-select" name="type">
+                    <option th:value="tw" th:selected="${type=='tw'}">전체</option>
+                    <option th:value="t" th:selected="${type=='t'}">평가제목</option>
+                    <option th:value="w" th:selected="${type=='w'}">작성자</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="text" class="form-control" th:value="${keyword}" placeholder="내용을 입력하세요." name="keyword">
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary">검색</button>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-primary"
+                        onclick="location.href='/course/register'">등록하기</button>
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-danger">신고</button>
+            </div>
+            <div class="col-md-3"></div>
+        </div>  <!--첫 번째 줄 끝-->
+        </form>
+        <div class="row mb-3" th:each="data:${courseDTOS}">  <!--두 번째 줄  반복작업-->
+            <div class="container">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <span class="fs-5" th:text="${data.lectureName}">강의명</span>
+                                <span th:text="${data.userID}">작성자 아이디</span>
+                            </div>
+                            <div class="col-md-7"></div>  <!--중간 여백-->
+                            <div class="col-md-2">
+                                <span class="fw-bold">종합</span>
+                                <span class="text-danger fw-bold" th:text="${data.totalScore}">A</span> <!--종합 점수-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="fs-5 fw-bold" th:text="${data.evaluationTitle}">평가제목</span>
+                        <span class="fw-bold">( [[${data.lectureYear}]]년 [[${data.semesterDivide}]] )</span>
+                        <div class="row mt-1">
+                            <span th:text="${data.evaluationContent}">평가내용</span>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-4">
+                                <span>성적</span>
+                                <span class="text-danger fw-bold" th:text="${data.creditScore}">A</span>
+                                <span>널널</span>
+                                <span class="text-danger fw-bold" th:text="${data.comfortableScore}">A</span>
+                                <span>강의</span>
+                                <span class="text-danger fw-bold" th:text="${data.lectureScore}">B</span>
+                                <span class="text-success fw-bold ms-2">(추천:[[${data.likeCount}]])</span>
+                            </div>
+                            <div class="col-md-6"></div> <!--중간여백-->
+                            <div class="col-md-2">
+                                <a th:href="@{/course/likecnt(evaluationID=${data.evaluationID})}">추천</a>
+                                <a th:href="|@{/course/remove(evaluationID=${data.evaluationID})}|" class="ms-2">삭제</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>  <!--두 번째 줄 끝-->
+        <div class="row">  <!--세 번째 줄(페이징)-->
+            <ul class="pagination justify-content-center mt-3 mb-3">
+                <li class="page-item" th:unless="${curPage==1}">
+                    <a class="page-link" th:href="@{/course/list(page=${prevPage},keyword=${keyword},type=${type})}">이전</a>
+                </li>
+                <li class="page-item" th:unless="${curPage==lastPage}">
+                    <a class="page-link" th:href="@{/course/list(page=${nextPage},keyword=${keyword},type=${type})}">다음</a>
+                </li>
+            </ul>
+        </div>  <!--세 번째 줄(페이징) 끝-->
+    </div>  <!--작업 공간 끝-->
+</div>
+</body>
+</html>
